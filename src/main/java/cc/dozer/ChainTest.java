@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * Created by Dozer on 11/6/14.
  */
 public class ChainTest {
-	protected void originMethod() {
+	public void originMethod() {
 	}
 
 	private static List<FilterWithChain> oneChainFilter;
