@@ -7,6 +7,9 @@ import cc.dozer.callback.FilterWithCallback;
 import cc.dozer.chain.FilterChainWrapper;
 import cc.dozer.chain.FilterWithChain;
 import cc.dozer.chain.FilterWithChainImpl;
+import cc.dozer.chainWithLambda.FilterChainAndLambdaWrapper;
+import cc.dozer.chainWithLambda.FilterWithChainAndLambda;
+import cc.dozer.chainWithLambda.FilterWithChainAndLambdaImpl;
 import cc.dozer.lambda.FilterWithLambda;
 import cc.dozer.lambda.FilterWithLambdaImpl;
 import cc.dozer.lambda.FilterWithLambdaWrapper;
@@ -26,6 +29,10 @@ public class ChainTest {
 	private static List<FilterWithChain> oneChainFilter;
 
 	private static List<FilterWithChain> fiveChainFilter;
+
+	private static List<FilterWithChainAndLambda> oneChainWithLambdaFilter;
+
+	private static List<FilterWithChainAndLambda> fiveChainWithLambdaFilter;
 
 	private static List<FilterWithLambda> oneLambdaFilter;
 
@@ -65,6 +72,16 @@ public class ChainTest {
 		fiveCallBackFilter.add(new FilterWithCallBackImpl());
 		fiveCallBackFilter.add(new FilterWithCallBackImpl());
 		fiveCallBackFilter.add(new FilterWithCallBackImpl());
+
+		oneChainWithLambdaFilter = new ArrayList<>();
+		oneChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
+
+		fiveChainWithLambdaFilter = new ArrayList<>();
+		fiveChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
+		fiveChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
+		fiveChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
+		fiveChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
+		fiveChainWithLambdaFilter.add(new FilterWithChainAndLambdaImpl());
 	}
 
 	@Benchmark
@@ -89,6 +106,30 @@ public class ChainTest {
 	public void withFiveChain() {
 		FilterChainWrapper chain = new FilterChainWrapper(fiveChainFilter);
 		chain.doFilter(this, chain);
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.Throughput)
+	@OutputTimeUnit(TimeUnit.MILLISECONDS)
+	@Threads(value = 5)
+	@Warmup(iterations = 2, time = 1)
+	@Measurement(iterations = 5, time = 1)
+	@Fork(value = 2)
+	public void withOneChainAndLambda() {
+		FilterChainAndLambdaWrapper chain = new FilterChainAndLambdaWrapper(oneChainWithLambdaFilter);
+		chain.doFilter(() -> originMethod(), chain);
+	}
+
+	@Benchmark
+	@BenchmarkMode(Mode.Throughput)
+	@OutputTimeUnit(TimeUnit.MILLISECONDS)
+	@Threads(value = 5)
+	@Warmup(iterations = 2, time = 1)
+	@Measurement(iterations = 5, time = 1)
+	@Fork(value = 2)
+	public void withFiveChainAndLambda() {
+		FilterChainAndLambdaWrapper chain = new FilterChainAndLambdaWrapper(fiveChainWithLambdaFilter);
+		chain.doFilter(() -> originMethod(), chain);
 	}
 
 	@Benchmark
